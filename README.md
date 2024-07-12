@@ -24,10 +24,12 @@ import (
 
 const (
 	apiKey = "YOUR_API_KEY_HERE"
+	accessKey = "YOUR_OAUTH_ACCESS_KEY_HERE"
 )
 
 func main() {
-	client := gochimp3.New(apiKey)
+	// One of apiKey or accessKey is required
+	client := gochimp3.New(apiKey, accessKey)
 
 	// Audience ID
 	// https://mailchimp.com/help/find-audience-id/
