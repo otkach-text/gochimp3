@@ -11,13 +11,18 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"reflect"
+	"regexp"
 	"time"
 )
 
-const URI string = "server.api.mailchimp.com"
+// URIFormat defines the endpoint for a single app
+const URIFormat string = "%s.api.mailchimp.com"
 
 // Version the latest API version
 const Version string = "/3.0"
+
+// DatacenterRegex defines which datacenter to hit
+var DatacenterRegex = regexp.MustCompile("[^-]\\w+$")
 
 // API represents the origin of the API
 type API struct {
@@ -33,10 +38,13 @@ type API struct {
 }
 
 // New creates an API
-func New(apiKey, accessToken string) *API {
+func New(apiKey, accessToken, server string) *API {
+	if server == "" && apiKey != "" {
+		server = DatacenterRegex.FindString(apiKey)
+	}
 	u := url.URL{}
 	u.Scheme = "https"
-	u.Host = URI
+	u.Host = fmt.Sprintf(URIFormat, server)
 	u.Path = Version
 
 	return &API{
